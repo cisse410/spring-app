@@ -1,0 +1,1 @@
+Ceci est un petit projet qui consiste à mettre en place un sytème de CRUD de produit avec Spring Boot, Spring Data JPA (pour la persistance des données) et MySQL (comme système de gestion de base de données)
