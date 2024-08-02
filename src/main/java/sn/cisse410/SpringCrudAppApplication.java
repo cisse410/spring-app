@@ -1,4 +1,4 @@
-package sn.cisse410.spring_crud_app;
+package sn.cisse410;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
