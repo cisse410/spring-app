@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import sn.cisse410.exception.ProductNotFoundException;
 import sn.cisse410.model.Product;
 import sn.cisse410.repository.ProductRepository;
 
@@ -35,7 +36,11 @@ public class ProductService {
      * @return
      */
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        List<Product> products = productRepository.findAll();
+        if (products.isEmpty()) {
+            throw new ProductNotFoundException("Aucun produits trouvé");
+        }
+        return products;
     }
 
     /**
@@ -50,18 +55,18 @@ public class ProductService {
      * @param id
      * @return
      */
-    public String deleteProduct(int id) {
+    public void deleteProduct(int id) {
+        if (!productRepository.existsById(id)) {
+            throw new ProductNotFoundException("Aucun produit trouvé avec l'id: " + id);
+        }
         productRepository.deleteById(id);
-        return "Product deleted successfully";
     }
 
     public Product updateProduct(Product product) {
-        Product prod = productRepository.findById(product.getId()).get();
-        prod.setId(product.getId());
-        prod.setName(product.getName());
-        prod.setQuantity(product.getQuantity());
-        prod.setPrice(product.getPrice());
+        if (!productRepository.existsById(product.getId())) {
+            throw new ProductNotFoundException("Aucun produit trouvé avec l'id: " + product);
+        }
 
-        return productRepository.save(prod);
+        return productRepository.save(product);
     }
 }
