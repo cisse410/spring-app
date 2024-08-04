@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import sn.cisse410.exception.ProductNotFoundException;
 import sn.cisse410.model.Product;
+import sn.cisse410.response.ResponseHandler;
 import sn.cisse410.service.ProductService;
 
 @RestController
@@ -30,9 +31,9 @@ public class ProductController {
      * @return
      */
     @PostMapping(path = "/product")
-    public ResponseEntity<Product> saveSingleProduct(@RequestBody Product product) {
+    public ResponseEntity<Object> saveSingleProduct(@RequestBody Product product) {
         Product savedProduct = productService.saveSingleProduct(product);
-        return new ResponseEntity<>(savedProduct, HttpStatus.CREATED);
+        return ResponseHandler.customResponse("Produit cree avec succes", HttpStatus.CREATED, savedProduct);
     }
 
     /**
@@ -40,18 +41,18 @@ public class ProductController {
      * @return
      */
     @PostMapping(path = "/products")
-    public ResponseEntity<List<Product>> saveManyProducts(@RequestBody List<Product> products) {
+    public ResponseEntity<Object> saveManyProducts(@RequestBody List<Product> products) {
         List<Product> savedProducts = productService.saveManyProduct(products);
-        return new ResponseEntity<>(savedProducts, HttpStatus.CREATED);
+        return ResponseHandler.customResponse("Produits crees avec succes", HttpStatus.CREATED, savedProducts);
     }
 
     /**
      * @return
      */
     @GetMapping(path = "/products")
-    public ResponseEntity<List<Product>> getAllProduct() {
+    public ResponseEntity<Object> getAllProduct() {
         List<Product> products = productService.getAllProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return ResponseHandler.customResponse("Voici la liste des produits", HttpStatus.OK, products);
     }
 
     /**
@@ -59,12 +60,12 @@ public class ProductController {
      * @return
      */
     @GetMapping(path = "/product/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable int id) {
+    public ResponseEntity<Object> getProductById(@PathVariable int id) {
         Product product = productService.getProductById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Aucun produit trouvé avec l'id " + id));
-        // Ceci est aussi est une possibilite une ResponseEntity (C'est la maniere
-        // statique)
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+
+        return ResponseHandler.customResponse("Voici les informations de: " + product.getName(), HttpStatus.OK,
+                product);
     }
 
     /**
@@ -72,12 +73,12 @@ public class ProductController {
      * @return
      */
     @PutMapping(path = "/product/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable int id, @RequestBody Product product) {
+    public ResponseEntity<Object> updateProduct(@PathVariable int id, @RequestBody Product product) {
         if (id != product.getId()) {
             throw new ProductNotFoundException("Aucune correspondance");
         }
         Product updatedProduct = productService.updateProduct(product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+        return ResponseHandler.customResponse("Produit modifie avec succes", HttpStatus.OK, updatedProduct);
     }
 
     /**
@@ -85,8 +86,8 @@ public class ProductController {
      * @return
      */
     @DeleteMapping(path = "/product/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable int id) {
+    public ResponseEntity<Object> deleteProduct(@PathVariable int id) {
         productService.deleteProduct(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseHandler.customResponse("Produit supprime avec succes", HttpStatus.NO_CONTENT, id);
     }
 }
