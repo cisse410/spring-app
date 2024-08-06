@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import sn.cisse410.exception.ProductNotFoundException;
 import sn.cisse410.model.Product;
 import sn.cisse410.response.ResponseHandler;
@@ -21,6 +22,7 @@ import sn.cisse410.service.ProductService;
 
 @RestController
 @RequestMapping("/api")
+@Tag(name = "Product", description = "Product API")
 public class ProductController {
 
     @Autowired
