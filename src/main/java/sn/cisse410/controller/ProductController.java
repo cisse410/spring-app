@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,6 +24,8 @@ import sn.cisse410.service.ProductService;
 
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:4200", methods = { RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.GET,
+        RequestMethod.POST }, allowedHeaders = "*")
 @Tag(name = "Product", description = "Product API")
 public class ProductController {
 
@@ -76,10 +80,14 @@ public class ProductController {
      */
     @PutMapping(path = "/product/{id}")
     public ResponseEntity<Object> updateProduct(@PathVariable int id, @RequestBody Product product) {
-        if (id != product.getId()) {
+        Product pro = productService.getProductById(id).get();
+        if (pro == null) {
             throw new ProductNotFoundException("Aucune correspondance");
         }
-        Product updatedProduct = productService.updateProduct(product);
+        pro.setName(product.getName());
+        pro.setQuantity(product.getQuantity());
+        pro.setPrice(product.getPrice());
+        Product updatedProduct = productService.updateProduct(pro);
         return ResponseHandler.customResponse("Produit modifie avec succes", HttpStatus.OK, updatedProduct);
     }
 
